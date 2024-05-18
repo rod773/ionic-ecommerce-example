@@ -1,6 +1,6 @@
-import { Navigate, Route, BrowserRouter, Routes } from "react-router-dom";
-import { IonApp, IonRouterOutlet } from "@ionic/react";
-//import { IonReactRouter } from "@ionic/react-router";
+import { Route, BrowserRouter, Routes } from "react-router-dom";
+import { IonApp } from "@ionic/react";
+
 import { setupIonicReact } from "@ionic/react";
 import Home from "./pages/Home";
 

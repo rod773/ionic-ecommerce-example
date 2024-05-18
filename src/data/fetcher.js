@@ -1,53 +1,57 @@
 import { ProductStore } from "./ProductStore";
 
 export const fetchData = async () => {
+  const json = [
+    "beds.json",
+    "armchairs.json",
+    "coffee_tables.json",
+    "cushions.json",
+    "floor_lamps.json",
+    "office_chairs.json",
+  ];
 
-    const json = ["beds.json", "armchairs.json", "coffee_tables.json", "cushions.json", "floor_lamps.json", "office_chairs.json"];
+  var products = [];
 
-    var products = [];
+  json.forEach(async (category) => {
+    const products = await fetchProducts(category);
 
-    json.forEach( async category => {
+    let categoryName = category.replace(".json", "");
+    categoryName = categoryName.replace("_", " ");
+    categoryName = uppercaseWords(categoryName);
 
-        const products = await fetchProducts(category);
+    const productCategory = {
+      name: categoryName,
+      slug: category.replace(".json", ""),
+      cover: products[6].image,
+      products,
+    };
 
-        let categoryName = category.replace(".json", "");
-        categoryName = categoryName.replace("_", " ");
-        categoryName = uppercaseWords(categoryName);
-
-        const productCategory = {
-
-            name: categoryName,
-            slug: category.replace(".json", ""),
-            cover: products[6].image,
-            products
-        };
-
-        ProductStore.update(s => { s.products = [ ...s.products, productCategory ]; });
+    ProductStore.update((s) => {
+      s.products = [...s.products, productCategory];
     });
+  });
 
-    return products;
-}
+  return products;
+};
 
-const fetchProducts = async category => {
+const fetchProducts = async (category) => {
+  const response = await fetch(`products/${category}`);
+  const data = await response.json();
 
-    const response = await fetch(`products/${ category }`);
-    const data = await response.json();
+  //  Set a product id
+  await data.forEach((d, i) => {
+    d.id = i + 1;
+  });
 
-    //  Set a product id
-    await data.forEach((d, i) => {
+  return data;
+};
 
-        d.id = i + 1;
-    });
-
-    return data;
-}
-
-const uppercaseWords = words => {
-
-    words = words.toLowerCase()
-    .split(' ')
+const uppercaseWords = (words) => {
+  words = words
+    .toLowerCase()
+    .split(" ")
     .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-    .join(' ');
+    .join(" ");
 
-    return words;
-}
+  return words;
+};
